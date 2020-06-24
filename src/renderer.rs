@@ -89,7 +89,7 @@ pub fn render_children<'a>(ids: &Vec<String>, blocks: &BlockTableType) -> Result
 }
 
 pub fn render_text(text: &Vec<FormattedText>) -> Markup {
-    text.iter().fold(html! {}, |acc, x| {
+    text.iter().enumerate().fold(html! {}, |acc, (i, x)| {
         if let Some(formatting) = &x.formatting {
             let initial = html! {
                 (x.text)
@@ -116,7 +116,9 @@ pub fn render_text(text: &Vec<FormattedText>) -> Markup {
             });
             return html! {
                 (acc)
-                (resulting)
+                span data-token-index=(i) {
+                    (resulting)
+                }
             };
         }
         return html! {
@@ -128,7 +130,7 @@ pub fn render_text(text: &Vec<FormattedText>) -> Markup {
 
 fn render_page(properties: &PageProperties) -> Markup {
     html! {
-        h1 {
+        h1 class="notion-page-block" {
             (render_text(&properties.title))
         }
     }
@@ -136,7 +138,7 @@ fn render_page(properties: &PageProperties) -> Markup {
 
 fn render_text_block(properties: &Option<TextProperties>) -> Markup {
     html! {
-        p {
+        p class="notion-text-block" {
             @if let Some(properties) = properties {
                 (render_text(&properties.title))
             }
@@ -146,7 +148,7 @@ fn render_text_block(properties: &Option<TextProperties>) -> Markup {
 
 fn render_bulleted_list(properties: &Option<TextProperties>) -> Markup {
     html! { 
-        li {
+        li class="notion-bulleted_list-block" {
             @if let Some(properties) = properties {
                 (render_text(&properties.title))
             }
